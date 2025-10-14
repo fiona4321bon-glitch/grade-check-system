@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教師成績輸入 - 資訊課程成績查詢</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>教師成績輸入系統</h1>
+
+    <div class="login-section" id="loginSection">
+      <h2>教師登入</h2>
+      <input type="text" id="teacherUser" placeholder="帳號">
+      <input type="password" id="teacherPass" placeholder="密碼">
+      <button onclick="teacherLogin()">登入</button>
+      <p class="back-link"><a href="index.html">← 返回首頁</a></p>
+    </div>
+
+    <div class="grade-section" id="gradeSection" style="display:none;">
+      <h2>輸入學生成績</h2>
+      <input type="text" id="studentId" placeholder="學號">
+      <input type="text" id="studentName" placeholder="姓名">
+      <input type="text" id="subject" placeholder="科目">
+      <input type="number" id="score" placeholder="分數">
+      <button onclick="saveGrade()">送出</button>
+
+      <h3>已輸入成績</h3>
+      <table border="1" id="gradeTable">
+        <thead>
+          <tr>
+            <th>學號</th>
+            <th>姓名</th>
+            <th>科目</th>
+            <th>分數</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <button class="logout" onclick="logout()">登出</button>
+    </div>
+  </div>
+</body>
+</html>
