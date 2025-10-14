@@ -1,7 +1,7 @@
-// 假帳號
+// ================== 教師登入設定 ==================
 const teacherAccount = { username: "teacher", password: "1234" };
 
-// 載入或初始化 localStorage
+// 從 localStorage 讀取學生與成績資料
 let students = JSON.parse(localStorage.getItem("students") || "[]");
 let grades = JSON.parse(localStorage.getItem("grades") || "[]");
 
@@ -45,7 +45,6 @@ function addStudent() {
   document.getElementById("newPass").value = "";
 }
 
-// 顯示學生名單
 function renderStudents() {
   const tbody = document.querySelector("#studentTable tbody");
   if (!tbody) return;
@@ -61,7 +60,6 @@ function renderStudents() {
   });
 }
 
-// 刪除學生
 function removeStudent(idx) {
   if (!confirm("確定要刪除此學生？")) return;
   students.splice(idx, 1);
@@ -69,13 +67,11 @@ function removeStudent(idx) {
   renderStudents();
 }
 
-// 修改密碼
 function changePass(idx, newVal) {
   students[idx].password = newVal;
   localStorage.setItem("students", JSON.stringify(students));
 }
 
-// 匯入 CSV
 function importStudents(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -116,7 +112,6 @@ function saveGrade() {
   document.getElementById("score").value = "";
 }
 
-// 自動帶出姓名
 document.addEventListener("input", e => {
   if (e.target.id === "studentId") {
     const id = e.target.value.trim();
@@ -125,21 +120,60 @@ document.addEventListener("input", e => {
   }
 });
 
-// 顯示成績
 function renderGrades() {
   const tbody = document.querySelector("#gradeTable tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
   grades.forEach(g => {
-    tbody.innerHTML += `<tr>
-      <td>${g.id}</td><td>${g.name}</td><td>${g.subject}</td><td>${g.score}</td>
-    </tr>`;
+    tbody.innerHTML += `<tr><td>${g.id}</td><td>${g.name}</td><td>${g.subject}</td><td>${g.score}</td></tr>`;
   });
 }
 
-// ================== 登出 ==================
 function logout() {
   document.getElementById("teacherPanel").style.display = "none";
   document.getElementById("loginSection").style.display = "block";
 }
 
+// ================== 學生登入與查詢 ==================
+function studentLogin() {
+  const user = document.getElementById("studentUser").value.trim();
+  const pass = document.getElementById("studentPass").value.trim();
+
+  // 每次登入都重新載入最新的學生資料
+  students = JSON.parse(localStorage.getItem("students") || "[]");
+  grades = JSON.parse(localStorage.getItem("grades") || "[]");
+
+  const student = students.find(s => s.id === user && s.password === pass);
+  if (!student) {
+    alert("帳號或密碼錯誤！");
+    return;
+  }
+
+  // 登入成功
+  document.getElementById("studentLoginSection").style.display = "none";
+  document.getElementById("studentGradeSection").style.display = "block";
+  document.getElementById("studentNameTitle").innerText = `${student.name} (${student.id}) 的成績`;
+
+  renderStudentGrades(student.id);
+}
+
+function renderStudentGrades(studentId) {
+  const tbody = document.querySelector("#studentGradeTable tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const myGrades = grades.filter(g => g.id === studentId);
+  if (myGrades.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="2">目前沒有成績資料</td></tr>`;
+    return;
+  }
+
+  myGrades.forEach(g => {
+    tbody.innerHTML += `<tr><td>${g.subject}</td><td>${g.score}</td></tr>`;
+  });
+}
+
+function studentLogout() {
+  document.getElementById("studentLoginSection").style.display = "block";
+  document.getElementById("studentGradeSection").style.display = "none";
+}
