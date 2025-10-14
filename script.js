@@ -177,3 +177,8 @@ function studentLogout() {
   document.getElementById("studentLoginSection").style.display = "block";
   document.getElementById("studentGradeSection").style.display = "none";
 }
+
+function studentLogout() {
+  document.getElementById("studentLoginSection").style.display = "block";
+  document.getElementById("studentGradeSection").style.display = "none";
+}
