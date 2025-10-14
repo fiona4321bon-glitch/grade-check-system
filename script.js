@@ -7,8 +7,8 @@ let grades = JSON.parse(localStorage.getItem("grades") || "[]");
 
 // ================== 教師登入 ==================
 function teacherLogin() {
-  const user = document.getElementById("teacherUser").value.trim();
-  const pass = document.getElementById("teacherPass").value.trim();
+  const user = document.getElementById("teacherUser")?.value.trim();
+  const pass = document.getElementById("teacherPass")?.value.trim();
 
   if (user === teacherAccount.username && pass === teacherAccount.password) {
     alert("登入成功！");
@@ -29,9 +29,9 @@ function showSection(id) {
 
 // ================== 學生管理 ==================
 function addStudent() {
-  const id = document.getElementById("newId").value.trim();
-  const name = document.getElementById("newName").value.trim();
-  const pass = document.getElementById("newPass").value.trim() || "0000";
+  const id = document.getElementById("newId")?.value.trim();
+  const name = document.getElementById("newName")?.value.trim();
+  const pass = document.getElementById("newPass")?.value.trim() || "0000";
 
   if (!id || !name) return alert("請輸入完整資料");
   if (students.find(s => s.id === id)) return alert("此學號已存在");
@@ -45,6 +45,7 @@ function addStudent() {
   document.getElementById("newPass").value = "";
 }
 
+// 顯示學生名單
 function renderStudents() {
   const tbody = document.querySelector("#studentTable tbody");
   if (!tbody) return;
@@ -60,6 +61,7 @@ function renderStudents() {
   });
 }
 
+// 刪除學生
 function removeStudent(idx) {
   if (!confirm("確定要刪除此學生？")) return;
   students.splice(idx, 1);
@@ -67,11 +69,13 @@ function removeStudent(idx) {
   renderStudents();
 }
 
+// 修改密碼
 function changePass(idx, newVal) {
   students[idx].password = newVal;
   localStorage.setItem("students", JSON.stringify(students));
 }
 
+// 匯入 CSV
 function importStudents(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -93,9 +97,9 @@ function importStudents(event) {
 
 // ================== 成績輸入 ==================
 function saveGrade() {
-  const id = document.getElementById("studentId").value.trim();
-  const subject = document.getElementById("subject").value.trim();
-  const score = document.getElementById("score").value.trim();
+  const id = document.getElementById("studentId")?.value.trim();
+  const subject = document.getElementById("subject")?.value.trim();
+  const score = document.getElementById("score")?.value.trim();
 
   if (!id || !subject || !score) return alert("請輸入完整資料");
 
@@ -112,6 +116,7 @@ function saveGrade() {
   document.getElementById("score").value = "";
 }
 
+// 自動帶出姓名
 document.addEventListener("input", e => {
   if (e.target.id === "studentId") {
     const id = e.target.value.trim();
@@ -120,15 +125,19 @@ document.addEventListener("input", e => {
   }
 });
 
+// 顯示成績
 function renderGrades() {
   const tbody = document.querySelector("#gradeTable tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
   grades.forEach(g => {
-    tbody.innerHTML += `<tr><td>${g.id}</td><td>${g.name}</td><td>${g.subject}</td><td>${g.score}</td></tr>`;
+    tbody.innerHTML += `<tr>
+      <td>${g.id}</td><td>${g.name}</td><td>${g.subject}</td><td>${g.score}</td>
+    </tr>`;
   });
 }
 
+// ================== 登出 ==================
 function logout() {
   document.getElementById("teacherPanel").style.display = "none";
   document.getElementById("loginSection").style.display = "block";
@@ -136,10 +145,10 @@ function logout() {
 
 // ================== 學生登入與查詢 ==================
 function studentLogin() {
-  const user = document.getElementById("studentUser").value.trim();
-  const pass = document.getElementById("studentPass").value.trim();
+  const user = document.getElementById("studentUser")?.value.trim();
+  const pass = document.getElementById("studentPass")?.value.trim();
 
-  // 每次登入都重新載入最新的學生資料
+  // 重新讀取最新資料
   students = JSON.parse(localStorage.getItem("students") || "[]");
   grades = JSON.parse(localStorage.getItem("grades") || "[]");
 
@@ -171,11 +180,6 @@ function renderStudentGrades(studentId) {
   myGrades.forEach(g => {
     tbody.innerHTML += `<tr><td>${g.subject}</td><td>${g.score}</td></tr>`;
   });
-}
-
-function studentLogout() {
-  document.getElementById("studentLoginSection").style.display = "block";
-  document.getElementById("studentGradeSection").style.display = "none";
 }
 
 function studentLogout() {
