@@ -3,34 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>學生成績查詢 - 資訊課程成績查詢</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+  <title>資訊課程成績查詢</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(to bottom right, #f3f7ff, #e6f0ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #3366cc;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #3366cc;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #2851a3;
+    }
+
+    #studentGradeSection {
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #3366cc;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f6ff;
+    }
+
+    .logout-btn {
+      background-color: #ff6666;
+      margin-top: 15px;
+    }
+
+    .logout-btn:hover {
+      background-color: #cc4c4c;
+    }
+
+    #studentNameTitle {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>學生成績查詢系統</h1>
-
     <!-- 登入區 -->
-    <div class="login-section" id="studentLoginSection">
-      <h2>學生登入</h2>
-      <input type="text" id="studentUser" placeholder="學號">
-      <input type="password" id="studentPass" placeholder="密碼">
+    <div id="studentLoginSection">
+      <h1>資訊課程成績查詢</h1>
+      <input type="text" id="studentUser" placeholder="請輸入學號">
+      <input type="password" id="studentPass" placeholder="請輸入密碼">
+      <br>
       <button onclick="studentLogin()">登入</button>
-      <p class="back-link"><a href="index.html">← 返回首頁</a></p>
     </div>
 
     <!-- 成績顯示區 -->
-    <div class="grade-section" id="studentGradeSection" style="display:none;">
-      <h2 id="studentNameTitle"></h2>
-      <table border="1" id="studentGradeTable">
+    <div id="studentGradeSection">
+      <h1>成績查詢結果</h1>
+      <div id="studentNameTitle"></div>
+      <table id="studentGradeTable">
         <thead>
-          <tr><th>科目</th><th>分數</th></tr>
+          <tr>
+            <th>科目</th>
+            <th>分數</th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>
-      <button class="logout" onclick="studentLogout()">登出</button>
+      <button class="logout-btn" onclick="studentLogout()">登出</button>
     </div>
   </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
