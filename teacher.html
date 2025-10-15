@@ -8,15 +8,16 @@
   <style>
     body {
       font-family: "微軟正黑體", sans-serif;
-      background-color: #dceeff;
+      background-color: #e9f4ff;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      margin: 0;
     }
 
-    .container {
-      background: #fff;
+    .box {
+      background-color: #fff;
       border-radius: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       padding: 30px 40px;
@@ -28,6 +29,11 @@
     h2 {
       color: #004a91;
       margin-bottom: 10px;
+    }
+
+    h3 {
+      margin: 10px 0;
+      color: #333;
     }
 
     input, select, button {
@@ -52,6 +58,8 @@
 
     hr {
       margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ccc;
     }
 
     table {
@@ -73,14 +81,30 @@
     #teacherPanel {
       display: none;
     }
+
+    a {
+      color: #004a91;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #555;
+      font-size: 13px;
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="box">
     <!-- 登入區 -->
     <div id="loginSection">
-      <h2>教師管理系統</h2>
+      <h2>教師成績管理系統</h2>
       <h3>教師登入</h3>
       <input type="text" id="teacherUser" placeholder="帳號" /><br />
       <input type="password" id="teacherPass" placeholder="密碼" /><br />
@@ -125,6 +149,8 @@
       <hr>
       <button onclick="logout()">登出</button>
     </div>
+
+    <footer>© 2025 資訊課程成績管理系統</footer>
   </div>
 
   <script src="teacher.js"></script>
