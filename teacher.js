@@ -17,6 +17,7 @@ async function teacherLogin() {
   document.querySelector("#loginSection button").disabled = true;
 
   try {
+    // ✅ 修正這裡：password=${pass}
     const res = await fetch(`${SCRIPT_URL}?teacher=${user}&password=${pass}`);
     const data = await res.json();
 
