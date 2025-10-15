@@ -1,11 +1,19 @@
-// ================== 教師登入設定 ==================
-const teacherAccount = { username: "teacher", password: "1234" };
+// =============================
+// ✅ Google Sheets 雲端版本 script.js
+// =============================
 
-// 從 localStorage 讀取學生與成績資料
+// 這是你自己的 Google Apps Script API 網址（請不要改）
+const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycby9zckX7MqXsaG49R8kSSeGw8I81bjmx7l6bp9sWsmOyVJCHdasqNahMDeaY42ErbjrQA/exec";
+
+// =============================
+// 🧑‍🏫 教師端（暫時保留 localStorage 版）
+// =============================
+
+const teacherAccount = { username: "teacher", password: "1234" };
 let students = JSON.parse(localStorage.getItem("students") || "[]");
 let grades = JSON.parse(localStorage.getItem("grades") || "[]");
 
-// ================== 教師登入 ==================
+// 教師登入
 function teacherLogin() {
   const user = document.getElementById("teacherUser")?.value.trim();
   const pass = document.getElementById("teacherPass")?.value.trim();
@@ -21,13 +29,13 @@ function teacherLogin() {
   }
 }
 
-// ================== 面板切換 ==================
+// 切換面板
 function showSection(id) {
   document.querySelectorAll(".panel-section").forEach(sec => sec.style.display = "none");
   document.getElementById(id).style.display = "block";
 }
 
-// ================== 學生管理 ==================
+// 新增學生
 function addStudent() {
   const id = document.getElementById("newId")?.value.trim();
   const name = document.getElementById("newName")?.value.trim();
@@ -95,7 +103,7 @@ function importStudents(event) {
   reader.readAsText(file, "utf-8");
 }
 
-// ================== 成績輸入 ==================
+// 儲存成績
 function saveGrade() {
   const id = document.getElementById("studentId")?.value.trim();
   const subject = document.getElementById("subject")?.value.trim();
@@ -125,7 +133,7 @@ document.addEventListener("input", e => {
   }
 });
 
-// 顯示成績
+// 顯示成績表
 function renderGrades() {
   const tbody = document.querySelector("#gradeTable tbody");
   if (!tbody) return;
@@ -137,52 +145,55 @@ function renderGrades() {
   });
 }
 
-// ================== 登出 ==================
+// 登出教師端
 function logout() {
   document.getElementById("teacherPanel").style.display = "none";
   document.getElementById("loginSection").style.display = "block";
 }
 
-// ================== 學生登入與查詢 ==================
-function studentLogin() {
-  const user = document.getElementById("studentUser")?.value.trim();
-  const pass = document.getElementById("studentPass")?.value.trim();
+// =============================
+// 👩‍🎓 學生端（連接 Google Sheets）
+// =============================
 
-  // 重新讀取最新資料
-  students = JSON.parse(localStorage.getItem("students") || "[]");
-  grades = JSON.parse(localStorage.getItem("grades") || "[]");
+async function studentLogin() {
+  const user = document.getElementById("studentUser").value.trim();
+  const pass = document.getElementById("studentPass").value.trim();
 
-  const student = students.find(s => s.id === user && s.password === pass);
-  if (!student) {
-    alert("帳號或密碼錯誤！");
+  if (!user || !pass) {
+    alert("請輸入帳號與密碼");
     return;
   }
 
-  // 登入成功
-  document.getElementById("studentLoginSection").style.display = "none";
-  document.getElementById("studentGradeSection").style.display = "block";
-  document.getElementById("studentNameTitle").innerText = `${student.name} (${student.id}) 的成績`;
+  try {
+    // 向 Google Apps Script 發送請求
+    const res = await fetch(`${GOOGLE_API_URL}?id=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`);
+    const data = await res.json();
 
-  renderStudentGrades(student.id);
-}
+    // 錯誤處理
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
 
-function renderStudentGrades(studentId) {
-  const tbody = document.querySelector("#studentGradeTable tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
+    // 登入成功 → 顯示成績
+    document.getElementById("studentLoginSection").style.display = "none";
+    document.getElementById("studentGradeSection").style.display = "block";
+    document.getElementById("studentNameTitle").innerText = `${data[0].name} (${data[0].id}) 的成績`;
 
-  const myGrades = grades.filter(g => g.id === studentId);
-  if (myGrades.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="2">目前沒有成績資料</td></tr>`;
-    return;
+    const tbody = document.querySelector("#studentGradeTable tbody");
+    tbody.innerHTML = "";
+    data.forEach(g => {
+      tbody.innerHTML += `<tr><td>${g.subject}</td><td>${g.score}</td></tr>`;
+    });
+  } catch (err) {
+    console.error(err);
+    alert("讀取資料時發生錯誤，請稍後再試");
   }
-
-  myGrades.forEach(g => {
-    tbody.innerHTML += `<tr><td>${g.subject}</td><td>${g.score}</td></tr>`;
-  });
 }
 
+// 學生登出
 function studentLogout() {
   document.getElementById("studentLoginSection").style.display = "block";
   document.getElementById("studentGradeSection").style.display = "none";
 }
+
