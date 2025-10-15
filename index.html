@@ -1,24 +1,71 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>資訊課程成績查詢</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: "微軟正黑體", sans-serif;
+      background-color: #e9f4ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #004a91;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    a {
+      color: #004a91;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: #555;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="box">
     <h1>資訊課程成績查詢</h1>
-    <p class="subtitle">請選擇身分登入系統</p>
-
-    <div class="button-group">
-      <a href="teacher.html" class="btn teacher">教師成績輸入</a>
-      <a href="student.html" class="btn student">學生成績查詢</a>
-    </div>
+    <p>請選擇身分登入系統</p>
+    <p>
+      <a href="teacher.html">教師成績輸入</a>｜
+      <a href="student.html">學生成績查詢</a>
+    </p>
   </div>
-
-  <footer>
-    <p>© 2025 資訊課程成績查詢系統</p>
-  </footer>
+  <footer>© 2025 資訊課程成績查詢系統</footer>
 </body>
 </html>
