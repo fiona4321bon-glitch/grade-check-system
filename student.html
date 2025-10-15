@@ -1,173 +1,121 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>資訊課程成績查詢</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>學生成績查詢</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background: linear-gradient(to bottom right, #f3f7ff, #e6f0ff);
-      margin: 0;
-      padding: 0;
+      font-family: "微軟正黑體", sans-serif;
+      background-color: #e9f4ff;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      margin: 0;
     }
 
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    .box {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
       width: 90%;
-      max-width: 500px;
+      max-width: 600px;
       text-align: center;
-      position: relative;
-      z-index: 1;
     }
 
-    h1 {
-      color: #3366cc;
-      margin-bottom: 20px;
+    h2 {
+      color: #004a91;
+      margin-bottom: 10px;
     }
 
-    input {
-      width: 80%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
+    input, button {
+      padding: 8px 10px;
+      margin: 5px;
       border-radius: 6px;
-      font-size: 16px;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
 
     button {
-      background-color: #3366cc;
+      cursor: pointer;
+      background-color: #0066cc;
       color: white;
       border: none;
-      padding: 10px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background-color 0.3s;
+      transition: 0.3s;
     }
 
     button:hover {
-      background-color: #2851a3;
+      background-color: #004a99;
+    }
+
+    a {
+      color: #004a91;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e7f2ff;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #555;
+      font-size: 13px;
     }
 
     #studentGradeSection {
       display: none;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-
-    th {
-      background-color: #3366cc;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f6ff;
-    }
-
-    .logout-btn {
-      background-color: #ff6666;
-      margin-top: 15px;
-    }
-
-    .logout-btn:hover {
-      background-color: #cc4c4c;
-    }
-
-    #studentNameTitle {
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    /* 🔹 Loading 動畫樣式 */
-    #loadingSpinner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .spinner {
-      width: 70px;
-      height: 70px;
-      border: 6px solid #ccc;
-      border-top-color: #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    #loadingSpinner p {
-      margin-top: 15px;
-      font-size: 18px;
-      color: #333;
-    }
   </style>
 </head>
-<body>
-  <!-- Loading 轉圈圈 -->
-  <div id="loadingSpinner">
-    <div class="spinner"></div>
-    <p>查詢中，請稍候...</p>
-  </div>
 
-  <div class="container">
-    <!-- 登入區 -->
+<body>
+  <div class="box">
+    <!-- 登入畫面 -->
     <div id="studentLoginSection">
-      <h1>資訊課程成績查詢</h1>
-      <input type="text" id="studentUser" placeholder="請輸入學號">
-      <input type="password" id="studentPass" placeholder="請輸入密碼">
-      <br>
+      <h2>學生成績查詢系統</h2>
+      <h3>學生登入</h3>
+      <input type="text" id="studentUser" placeholder="學號" /><br />
+      <input type="password" id="studentPass" placeholder="密碼" /><br />
       <button onclick="studentLogin()">登入</button>
+      <p><a href="index.html">← 返回首頁</a></p>
     </div>
 
-    <!-- 成績顯示區 -->
+    <!-- 成績查詢畫面 -->
     <div id="studentGradeSection">
-      <h1>成績查詢結果</h1>
-      <div id="studentNameTitle"></div>
+      <h2 id="studentNameTitle"></h2>
       <table id="studentGradeTable">
         <thead>
-          <tr>
-            <th>科目</th>
-            <th>分數</th>
-          </tr>
+          <tr><th>科目</th><th>分數</th></tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <tr><td colspan="2">目前沒有資料</td></tr>
+        </tbody>
       </table>
-      <button class="logout-btn" onclick="studentLogout()">登出</button>
+      <button onclick="studentLogout()">登出</button>
     </div>
+
+    <footer>© 2025 資訊課程成績查詢系統</footer>
   </div>
 
   <script src="script.js"></script>
