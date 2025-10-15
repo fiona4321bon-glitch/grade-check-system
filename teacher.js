@@ -1,6 +1,6 @@
 // ======================== 設定 ========================
 const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbw92ckX7MqXsA649R8kSSeGw81Bjmx716bp9sWsm0yVJHdsaqNahMDeaY42ErbjrQA/exec";
+  "https://script.google.com/macros/s/AKfycby9zckX7MqXsaG49R8kSSeGw8I81bjmx7l6bp9sWsmOyVJCHdasqNahMDeaY42ErbjrQA/exec";
 
 let teacherAccount = "";
 let teacherName = "";
