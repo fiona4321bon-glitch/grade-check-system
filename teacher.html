@@ -1,66 +1,63 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>教師成績輸入 - 資訊課程成績查詢</title>
+  <title>教師成績管理系統</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>教師管理系統</h1>
+    <h1>教師成績管理系統</h1>
 
+    <!-- 登入區 -->
     <div id="loginSection">
       <h2>教師登入</h2>
-      <input type="text" id="teacherUser" placeholder="帳號">
+      <input type="text" id="teacherUser" placeholder="教師帳號">
       <input type="password" id="teacherPass" placeholder="密碼">
       <button onclick="teacherLogin()">登入</button>
-      <p class="back-link"><a href="index.html">← 返回首頁</a></p>
+      <p><a href="index.html">← 返回首頁</a></p>
     </div>
 
+    <!-- 教師操作面板 -->
     <div id="teacherPanel" style="display:none;">
-      <h2>教師功能面板</h2>
-      <button onclick="showSection('studentManage')">學生管理</button>
-      <button onclick="showSection('gradeInput')">成績輸入</button>
+      <h2 id="welcomeMsg"></h2>
+      <h3 id="classInfo"></h3>
       <button onclick="logout()">登出</button>
 
-      <!-- 學生管理區 -->
-      <div id="studentManage" class="panel-section">
-        <h3>學生名單管理</h3>
-        <p>可手動新增或上傳 CSV 檔（格式：學號,姓名,密碼）</p>
-        <input type="file" id="studentCsv" accept=".csv" onchange="importStudents(event)">
-        <br><br>
+      <hr>
+
+      <!-- 成績輸入 -->
+      <section>
+        <h3>新增學生成績</h3>
         <input type="text" id="newId" placeholder="學號">
         <input type="text" id="newName" placeholder="姓名">
-        <input type="text" id="newPass" placeholder="密碼">
-        <button onclick="addStudent()">新增學生</button>
+        <input type="text" id="newSubject" placeholder="科目">
+        <input type="number" id="newScore" placeholder="分數">
+        <input type="text" id="newPass" placeholder="學生密碼 (預設0000)">
+        <button onclick="addGrade()">新增</button>
+      </section>
 
-        <h4>學生名單</h4>
-        <table border="1" id="studentTable">
+      <hr>
+
+      <!-- 成績查詢 -->
+      <section>
+        <h3>班級所有成績</h3>
+        <button onclick="loadClassGrades()">重新載入</button>
+        <table id="gradeTable" border="1">
           <thead>
-            <tr><th>學號</th><th>姓名</th><th>密碼</th><th>操作</th></tr>
+            <tr>
+              <th>學號</th>
+              <th>姓名</th>
+              <th>科目</th>
+              <th>分數</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
-      </div>
-
-      <!-- 成績輸入區 -->
-      <div id="gradeInput" class="panel-section" style="display:none;">
-        <h3>成績輸入</h3>
-        <input type="text" id="studentId" placeholder="輸入學號">
-        <input type="text" id="studentName" placeholder="姓名" readonly>
-        <input type="text" id="subject" placeholder="科目">
-        <input type="number" id="score" placeholder="分數">
-        <button onclick="saveGrade()">送出成績</button>
-
-        <h4>目前所有成績</h4>
-        <table border="1" id="gradeTable">
-          <thead><tr><th>學號</th><th>姓名</th><th>科目</th><th>分數</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      </section>
     </div>
   </div>
+
+  <script src="teacher.js"></script>
 </body>
 </html>
