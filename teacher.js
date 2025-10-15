@@ -1,27 +1,23 @@
-// =====================================
-// ✅ 教師端主程式 (teacher.js)
-// =====================================
-
-// 這裡改成妳自己的 Apps Script 部署網址
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9zckX7MqXsaG49R8kSSeGw8I81bjmx7l6bp9sWsmOyVJCHdasqNahMDeaY42ErbjrQA/exec";
+// ======================== 設定 ========================
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbw92ckX7MqXsA649R8kSSeGw81Bjmx716bp9sWsm0yVJHdsaqNahMDeaY42ErbjrQA/exec";
 
 let teacherAccount = "";
-let teacherPassword = "";
 let teacherName = "";
 let teacherClasses = [];
 let currentClass = "";
 
-// =============================
-// 教師登入
-// =============================
+
+// ======================== 登入 ========================
 async function teacherLogin() {
   const user = document.getElementById("teacherUser").value.trim();
   const pass = document.getElementById("teacherPass").value.trim();
+
   if (!user || !pass) return alert("請輸入帳號與密碼");
 
-  const loginBtn = document.querySelector("#loginSection button");
-  loginBtn.textContent = "登入中...";
-  loginBtn.disabled = true;
+  const btn = document.querySelector("#loginSection button");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="loading-spinner"></span> 登入中...`;
 
   try {
     const res = await fetch(`${SCRIPT_URL}?teacher=${user}&password=${pass}`);
@@ -29,196 +25,187 @@ async function teacherLogin() {
 
     if (data.error) {
       alert(data.error);
-      loginBtn.textContent = "登入";
-      loginBtn.disabled = false;
+      btn.disabled = false;
+      btn.innerText = "登入";
       return;
     }
 
     teacherAccount = user;
-    teacherPassword = pass;
-    teacherName = data.teacherName;
-    teacherClasses = data.classes;
-    currentClass = data.currentClass;
+    teacherName = data.name || "未命名教師";
+    teacherClasses = data.classes || [];
+    currentClass = data.currentClass || teacherClasses[0] || "尚未建立班級";
 
+    // 切換畫面
     document.getElementById("loginSection").style.display = "none";
     document.getElementById("teacherPanel").style.display = "block";
-    document.getElementById("welcomeMsg").innerText = `${teacherName}您好！`;
-    document.getElementById("classInfo").innerText = `您目前管理的班級：${currentClass}`;
 
-    showClassList(teacherClasses, currentClass);
-    renderGrades(data.data);
+    document.getElementById("welcomeMsg").innerText = `${teacherName}您好！`;
+    document.getElementById("classInfo").innerText =
+      `您目前管理的班級：${currentClass}`;
+
+    loadClassList();
   } catch (err) {
-    alert("登入失敗：" + err);
+    alert("登入發生錯誤，請稍後再試。");
+    console.error(err);
   } finally {
-    loginBtn.textContent = "登入";
-    loginBtn.disabled = false;
+    btn.disabled = false;
+    btn.innerText = "登入";
   }
 }
 
-// =============================
-// 顯示班級清單
-// =============================
-function showClassList(classes, current) {
-  const sel = document.getElementById("classSelect");
-  sel.innerHTML = "";
-  if (!classes || classes.length === 0) {
-    sel.innerHTML = `<option>目前尚未建立班級</option>`;
+
+// ======================== 載入班級下拉選單 ========================
+function loadClassList() {
+  const select = document.getElementById("classSelect");
+  select.innerHTML = "";
+
+  if (teacherClasses.length === 0) {
+    const opt = document.createElement("option");
+    opt.textContent = "目前尚未建立班級";
+    select.appendChild(opt);
     return;
   }
 
-  classes.forEach(c => {
+  teacherClasses.forEach((cls) => {
     const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    if (c === current) opt.selected = true;
-    sel.appendChild(opt);
+    opt.value = cls;
+    opt.textContent = cls;
+    if (cls === currentClass) opt.selected = true;
+    select.appendChild(opt);
   });
 }
 
-// =============================
-// 新增班級
-// =============================
-async function addNewClass() {
-  const newClass = document.getElementById("newClassName").value.trim();
-  if (!newClass) return alert("請輸入班級名稱");
 
-  const payload = {
-    teacher: teacherAccount,
-    password: teacherPassword,
-    newClass
-  };
+// ======================== 新增班級 ========================
+async function addNewClass() {
+  const newClassName = document.getElementById("newClassName").value.trim();
+  if (!newClassName) return alert("請輸入班級名稱");
 
   try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(`${SCRIPT_URL}?action=addClass&teacher=${teacherAccount}&class=${newClassName}`);
     const data = await res.json();
-    alert(data.message || data.error);
 
-    // 自動刷新班級列表
-    if (data.message && data.message.includes("成功")) {
-      await reloadTeacherData();
+    if (data.message) {
+      alert(data.message);
+      await reloadTeacherData(); // 成功或班級存在都刷新
       document.getElementById("newClassName").value = "";
+    } else if (data.error) {
+      alert(data.error);
     }
   } catch (err) {
-    alert("新增班級失敗：" + err);
+    alert("新增班級時發生錯誤。");
+    console.error(err);
   }
 }
 
-// =============================
-// 新增學生成績
-// =============================
+
+// ======================== 重新抓教師資料 ========================
+async function reloadTeacherData() {
+  try {
+    const res = await fetch(`${SCRIPT_URL}?teacher=${teacherAccount}`);
+    const data = await res.json();
+
+    teacherClasses = data.classes || [];
+    currentClass = data.currentClass || teacherClasses[0] || "尚未建立班級";
+    loadClassList();
+
+    document.getElementById("classInfo").innerText =
+      `您目前管理的班級：${currentClass}`;
+  } catch (err) {
+    console.error(err);
+    alert("重新整理班級資料時發生錯誤");
+  }
+}
+
+
+// ======================== 新增學生成績 ========================
 async function addGrade() {
   const id = document.getElementById("newId").value.trim();
   const name = document.getElementById("newName").value.trim();
   const subject = document.getElementById("newSubject").value.trim();
   const score = document.getElementById("newScore").value.trim();
-  const studentPass = document.getElementById("newPass").value.trim() || "0000";
+  const pass = document.getElementById("newPass").value.trim() || "0000";
   const className = document.getElementById("classSelect").value;
 
   if (!id || !name || !subject || !score)
-    return alert("請輸入完整資料");
-
-  const payload = {
-    teacher: teacherAccount,
-    password: teacherPassword,
-    id,
-    name,
-    subject,
-    score,
-    studentPass,
-    class: className
-  };
-
-  try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    alert(data.message || data.error);
-
-    // 新增完後自動更新列表
-    if (data.message && data.message.includes("成績已新增")) {
-      await loadClassGrades();
-      document.getElementById("newId").value = "";
-      document.getElementById("newName").value = "";
-      document.getElementById("newSubject").value = "";
-      document.getElementById("newScore").value = "";
-      document.getElementById("newPass").value = "";
-    }
-  } catch (err) {
-    alert("新增失敗：" + err);
-  }
-}
-
-// =============================
-// 重新載入成績
-// =============================
-async function loadClassGrades() {
-  const className = document.getElementById("classSelect").value;
-  document.querySelector("#gradeTable tbody").innerHTML =
-    `<tr><td colspan="4">載入中...</td></tr>`;
+    return alert("請填寫完整的學生資料！");
 
   try {
     const res = await fetch(
-      `${SCRIPT_URL}?teacher=${teacherAccount}&password=${teacherPassword}&class=${className}`
+      `${SCRIPT_URL}?action=addGrade&class=${className}&id=${id}&name=${name}&subject=${subject}&score=${score}&password=${pass}`
     );
     const data = await res.json();
-    if (data.error) {
-      alert(data.error);
+
+    if (data.message) {
+      alert(data.message);
+      loadClassGrades();
+    } else {
+      alert("新增失敗，請稍後再試。");
+    }
+  } catch (err) {
+    alert("新增時發生錯誤");
+    console.error(err);
+  }
+}
+
+
+// ======================== 讀取班級成績 ========================
+async function loadClassGrades() {
+  const className = document.getElementById("classSelect").value;
+  const table = document.getElementById("gradeTable").querySelector("tbody");
+
+  table.innerHTML = `<tr><td colspan="4">載入中...</td></tr>`;
+
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getGrades&class=${className}`);
+    const data = await res.json();
+
+    if (data.error || !data.grades || data.grades.length === 0) {
+      table.innerHTML = `<tr><td colspan="4">目前沒有資料</td></tr>`;
       return;
     }
-    renderGrades(data.data);
+
+    table.innerHTML = "";
+    data.grades.forEach((r) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${r.id}</td><td>${r.name}</td><td>${r.subject}</td><td>${r.score}</td>`;
+      table.appendChild(tr);
+    });
   } catch (err) {
-    alert("載入失敗：" + err);
+    table.innerHTML = `<tr><td colspan="4">讀取失敗</td></tr>`;
+    console.error(err);
   }
 }
 
-// =============================
-// 重新載入教師資料 (自動刷新班級)
-// =============================
-async function reloadTeacherData() {
-  const res = await fetch(`${SCRIPT_URL}?teacher=${teacherAccount}&password=${teacherPassword}`);
-  const data = await res.json();
-  if (!data.error) {
-    teacherClasses = data.classes;
-    showClassList(teacherClasses, data.currentClass);
-  }
-}
 
-// =============================
-// 顯示成績表格
-// =============================
-function renderGrades(grades) {
-  const tbody = document.querySelector("#gradeTable tbody");
-  tbody.innerHTML = "";
-  if (!grades || grades.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4">目前沒有資料</td></tr>`;
-    return;
-  }
-
-  grades.forEach(g => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${g.id}</td><td>${g.name}</td><td>${g.subject}</td><td>${g.score}</td>`;
-    tbody.appendChild(row);
-  });
-}
-
-// =============================
-// 登出功能
-// =============================
+// ======================== 登出 ========================
 function logout() {
   teacherAccount = "";
-  teacherPassword = "";
   teacherName = "";
   teacherClasses = [];
   currentClass = "";
 
   document.getElementById("teacherPanel").style.display = "none";
   document.getElementById("loginSection").style.display = "block";
-  document.getElementById("teacherUser").value = "";
-  document.getElementById("teacherPass").value = "";
 }
 
+
+// ======================== 登入動畫（CSS動態） ========================
+const style = document.createElement("style");
+style.innerHTML = `
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid #004a91;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}`;
+document.head.appendChild(style);
